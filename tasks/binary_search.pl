@@ -26,7 +26,7 @@ print "Массив после сортировки: @array\n";
 print "Введите число для поиска\n";
 my $search;
 while ( chomp( $search = <STDIN> ) ) {
-    if ( $search =~ /^-?\d+$/ ) {
+    if ( $search =~ m/ ^ -? \d+ $ /x ) {
         last;
     } else {
         print "Ошибка, $search не является чилом, введите число\n";

@@ -8,7 +8,7 @@ my $param1;
 my $action;
 my $param2;
 while ( chomp( $_ = <STDIN> ) ) {
-    if ( /^(-?\d+) ([\+\-\/\*]{1}) (-?\d+)$/ ) {
+    if ( $_ =~ m/ ^ ( -? \d+ ) \h ( [ \+ \- \/ \* ]{1} ) \h ( -? \d+ ) $ /x ) {
         $param1 = $1;
         $action = $2;
         $param2 = $3;
