@@ -2,44 +2,63 @@
 use strict;
 use warnings FATAL => 'all';
 
-# Вввод значений для математической операции
-print "Введите число действие число\n";
-my $result_expression = "";
-my $result = 0;
-while ( chomp( $_ = <STDIN> ) ) {
+# Вввод числа и прверка, что введенное значение является числом
+sub _calculator_pro_check_number {
+    print "Введите число\n";
+    while ( ) {
+        chomp( my $number = <STDIN> );
+        if ( $number =~ m/ ^ ( -? \d+ ) $/x ) {
+            return $number;
+        } else {
+            print "Ошибка, $number не математическим выражением, введите выражение\n";
+        }
+    }
+}
+
+# Вввод числа математической операции
+my $result = _calculator_pro_check_number();
+my $result_expression = $result;
+my $last_action = "";
+while ( ) {
+
+    # Ввод операции +-*/ или = для завершения вычислений
+    print "Введите дейстивие +-/* или = для завершения вычислений\n";
+    chomp( my $action = <STDIN> );
 
     # Введен ли символ для окончания вычислений, если окончание, то вывод результата
-    if ( $_ =~ m/ ^ = $ /x ) {
-        $result_expression =~ s/ ^ \( \h | \h \) $ //xg;
+    if ( $action =~ m/ ^ = $ /x ) {
         print "$result_expression = $result\n";
         last;
-    } elsif ( $_ =~ m/ ^ ( -? \d+ \h )? ( [ \+ \- \/ \* ]{1} ) \h ( -? \d+ ) $ /x ) {
+    } elsif ( $action =~ m/ ^ [ \+ \- \/ \* ] $ /x ) {
 
-        # Определение введна первая строка с двумя переменными или уже последующие строки
-        if ( defined( $1 ) ) {
-            $result = $1;
-            $result_expression .= $1;
-        }
+        # Вввод числа математической операции
+        my $number = _calculator_pro_check_number();
 
         # Вычисление результата выражения
-        if ( $2 eq "+" ) {
-            $result = $result + $3;
-        } elsif ( $2 eq "-" ) {
-            $result = $result - $3;
-        } elsif ( $2 eq "/" ) {
-            if ( $3 == 0 ) {
+        if ( $action eq "+" ) {
+            $result = $result + $number;
+        } elsif ( $action eq "-" ) {
+            $result = $result - $number;
+        } elsif ( $action eq "/" ) {
+            if ( $number == 0 ) {
                 print "Ошибка, нельзя делить на ноль\n";
                 next;
             }
-            $result = $result / $3;
+            $result = $result / $number;
         } else {
-            $result = $result * $3;
+            $result = $result * $number;
         }
-        $result_expression = "( " . $result_expression . " $2 $3 )";
+
+        if ( ( $action eq "/" || $action eq "*" ) && ( $last_action eq "+" || $last_action eq "-" ) ) {
+            $result_expression = "( $result_expression )";
+        }
+
+        $result_expression .= " $action $number";
+        $last_action = $action;
 
         # Вывод предрезультата
         print "$result\n";
     } else {
-        print "Ошибка, $_ не математическим выражением, введите выражение\n";
+        print "Ошибка, $action не математическим действием\n";
     };
 }

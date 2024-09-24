@@ -3,18 +3,18 @@ use strict;
 use warnings FATAL => 'all';
 
 # Вввод значений для математической операции
-print "Введите число действие число\n";
+print "Введите число действие число через пробелы\n";
 my $param1;
 my $action;
 my $param2;
-while ( chomp( $_ = <STDIN> ) ) {
-    if ( $_ =~ m/ ^ ( -? \d+ ) \h ( [ \+ \- \/ \* ]{1} ) \h ( -? \d+ ) $ /x ) {
+while ( chomp( my $entered_value = <STDIN> ) ) {
+    if ( $entered_value =~ m/ ^ ( -? \d+ ) \h ( [ \+ \- \/ \* ]{1} ) \h ( -? \d+ ) $ /x ) {
         $param1 = $1;
         $action = $2;
         $param2 = $3;
         last;
     } else {
-        print "Ошибка, $_ не математическим выражением, введите выражение\n";
+        print "Ошибка, $entered_value не математическим выражением, введите выражение\n";
     };
 }
 

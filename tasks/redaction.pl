@@ -44,6 +44,7 @@ while ( <FILE> ) {
     }
 
     for my $word ( @words ) {
+        $word =~ s/ ^ (.*) $/ \L$1 /xs;
         if ( $word =~ m/ - $ /x ) {
             $part_word = $word;
             $part_word =~ s/ - //x;
@@ -66,7 +67,7 @@ foreach my $key ( sort {$hash_words{$b} <=> $hash_words{$a}} keys %hash_words ) 
     if ( $value > 2 ) {
         print "$key $value\n";
     }
-    if ( grep( m/ ^ $key $ /x, @bad_words_dictionary ) ) {
+    if ( grep( m/ ^ $key $ /xi, @bad_words_dictionary ) ) {
         push @bad_words_script, $key;
     }
 }

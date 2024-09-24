@@ -13,9 +13,8 @@ sub _task_5_read_conf {
 
     # Если удалось открыть файл, читаем и сохраняем его в массив
     my @users;
-    while ( <FILE> ) {
-        chomp;
-        push @users, $_;
+    while ( chomp( my $file = <FILE> ) ) {
+        push @users, $file;
     }
 
     # Закрытие файла
