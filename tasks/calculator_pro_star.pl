@@ -1,22 +1,11 @@
 #!/usr/bin/perl
 use strict;
 use warnings FATAL => 'all';
-
-# Вввод числа и прверка, что введенное значение является числом
-sub _calculator_pro_check_number {
-    print "Введите число\n";
-    while ( ) {
-        chomp( my $number = <STDIN> );
-        if ( $number =~ m/ ^ ( -? \d+ ) $/x ) {
-            return $number;
-        } else {
-            print "Ошибка, $number не математическим выражением, введите выражение\n";
-        }
-    }
-}
+use lib 'C:/first/tasks/';
+use tools;
 
 # Вввод числа математической операции
-my $result = _calculator_pro_check_number();
+my $result = tools::calculator_check_number();
 my $result_expression = $result;
 my $last_action = "";
 while ( ) {
