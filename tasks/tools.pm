@@ -41,7 +41,7 @@ sub task_4_check_login_and_password {
     );
 
     # Проверяем совпадает ли имя и пароль
-    if ( $find == 1 && $user_password eq $user_prms{$user_name} ) {
+    if ( $find == 1 && exists( $user_prms{$user_name} ) && $user_password eq $user_prms{$user_name} ) {
         return 1;
     }
 
@@ -59,7 +59,8 @@ sub task_5_read_conf {
 
     # Если удалось открыть файл, читаем и сохраняем его в массив
     my @users;
-    while ( chomp( my $file = <FILE> ) ) {
+    while ( my $file = <FILE> ) {
+        chomp( $file );
         push @users, $file;
     }
 
@@ -82,7 +83,7 @@ sub task_6_read_conf {
     my %users;
     while ( my $line = <FILE> ) {
         $line =~ s/ \s //xg;
-        if ( $line =~ m/ ( ^ \#{0} \w* ) = ( \w* ) /x ) {
+        if ( $line =~ m/ ( ^ \#{0} \w* ) = ( [\w!@#\$%^&*()]* ) /x ) {
             $users{$1} = $2;
         }
     }
@@ -116,15 +117,15 @@ sub task_8_login {
 
 # Функция для регистрации нового пользователя
 sub task_8_reg_user {
-    my ( $user_name, $user_password ) = @_;
+    my ( $file_name, $user_name, $user_password ) = @_;
 
-    my %users = &task_6_read_conf( "conf.ini" );
+    my %users = &task_6_read_conf( $file_name );
 
     if ( exists( $users{$user_name} ) ) {
         print "Пользователь с таким логином уже зарегистрирован\n";
     } else {
         $users{$user_name} = $user_password;
-        &task_8_rewrite_config( "conf.ini", %users );
+        &task_8_rewrite_config( $file_name, %users );
         print "Пользователь зарегистрирован\n";
     }
 }
@@ -148,8 +149,7 @@ sub task_8_rewrite_config {
 sub task_9_check_user_name {
     my $user_name = shift @_;
 
-    if ( !defined( $user_name ) || $user_name =~ m/ \W | ^ $ /x
-            || ! ( $user_name =~ m/ ^ [A-Za-z]+ [A-Za-z0-9_-]* [A-Za-z0-9]+ $ /x ) ) {
+    if ( !defined( $user_name ) || ! ( $user_name =~ m/ ^ [A-Za-z]+ [A-Za-z0-9_-]* [A-Za-z0-9]+ $ /x ) ) {
         print "Имя пользователя либо не указано, либо указано не верно. Используйте только буквы цифры и символы -_\n";
         return 0;
     }
@@ -161,7 +161,7 @@ sub task_9_check_user_name {
 sub task_9_check_user_password {
     my $user_password = shift @_;
 
-    if ( !defined( $user_password ) || $user_password =~ m/ ^ \W* $ /x || length( $user_password ) < 8 ) {
+    if ( !defined( $user_password ) || length( $user_password ) < 8 ) {
         print "Пароль должен быть не короче 8 символов\n";
     } elsif ( ! ( $user_password =~ m/ ^ [A-Za-z]+ /x ) ) {
         print "Пароль должен начинаться с буквы\n";
@@ -169,7 +169,7 @@ sub task_9_check_user_password {
         print "Пароль должен содержать хоты бы один символ !@#\$%^&*()\n";
     } elsif ( ! ( $user_password =~ m/ [A-Z]+ /x ) ) {
         print "Пароль должен содержать хоты бы один символ в верхнем регистре\n";
-    } elsif ( ! ( $user_password =~ m/ \D+ /x ) ) {
+    } elsif ( ! ( $user_password =~ m/ \d+ /x ) ) {
         print "Пароль должен содержать хоты бы одну цифру\n";
     } else {
         return 1;
@@ -179,14 +179,32 @@ sub task_9_check_user_password {
 }
 
 sub task_10_del_user {
-    my $user_name = shift @_;
+    my ( $file_name, $user_name ) = @_;
 
-    my %users = &task_6_read_conf( "conf.ini" );
+    my %users = &task_6_read_conf( $file_name );
 
     if ( defined( $user_name ) && exists( $users{$user_name} ) ) {
         delete $users{$user_name};
-        &task_8_rewrite_config( "conf.ini", %users );
+        &task_8_rewrite_config( $file_name, %users );
         print "Пользователь удален\n";
+    } else {
+        print "Пользователь с таким именем не существует\n";
+    }
+}
+
+# Функция для изменения пароля
+sub task_11_change_password {
+    my ( $file_name, $user_name, $user_password ) = @_;
+
+    my %users = &task_6_read_conf( $file_name );
+
+    if ( defined( $user_name ) && exists( $users{$user_name} ) ) {
+        my $check_passwd = &task_9_check_user_password( $user_password );
+        if ( $check_passwd == 1 ) {
+            $users{$user_name} = $user_password;
+            &task_8_rewrite_config( $file_name, %users );
+            print "Пароль изменен\n";
+        }
     } else {
         print "Пользователь с таким именем не существует\n";
     }

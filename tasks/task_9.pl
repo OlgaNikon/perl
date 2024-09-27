@@ -5,7 +5,8 @@ use lib 'C:/first/tasks/';
 use tools;
 
 # Получаем данные
-my ( $user_name, $user_password, $action ) = @ARGV;
+my ( $action, $user_name, $user_password ) = @ARGV;
+my $file_name = "conf.ini";
 
 # Вызываем функию для регистрации или входа
 if ( $action eq "log" ) {
@@ -17,7 +18,7 @@ if ( $action eq "log" ) {
 
     # Если логин и пароль прошел проверку вызываем функию для регистрации
     if ( $check_usr_name_password == 1 ) {
-        tools::task_8_reg_user( $user_name, $user_password );
+        tools::task_8_reg_user( $file_name, $user_name, $user_password );
     } else {
         print "Ошибка, введите корректное имя и пароль";
     }
