@@ -9,7 +9,7 @@ my $conf_path = "tasks/files/";
 my $file_name = shift @ARGV;
 
 # Чтение файла
-my $document = XML::LibXML->new->parse_file($conf_path . $file_name);
+my $document = XML::LibXML->new->parse_file( $conf_path . $file_name );
 
 # Вывод результата
 print $document;
