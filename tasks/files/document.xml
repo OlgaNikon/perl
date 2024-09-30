@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<users>
+    <user>
+        <name>name 1</name>
+        <age>18</age>
+        <phone>+7 000 000 00 00</phone>
+    </user>
+    <user>
+        <name>name 2</name>
+        <age>45</age>
+        <phone>+7 000 000 00 11</phone>
+    </user>
+</users>
