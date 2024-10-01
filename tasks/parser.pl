@@ -11,6 +11,7 @@ my $file_name = shift @ARGV;
 # Чтение файла
 my $document = XML::LibXML->new->parse_file( $conf_path . $file_name );
 $document =~ s/ < [^>]* > //gx;
+$document =~ s/ \s+ / /gx;
 
 # Вывод результата
 print $document;
