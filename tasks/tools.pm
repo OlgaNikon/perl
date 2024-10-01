@@ -1,6 +1,8 @@
 package tools;
 use strict;
 use warnings FATAL => 'all';
+use XML::LibXML;
+use JSON::PP;
 
 my $conf_path = "tasks/files/";
 
@@ -208,6 +210,50 @@ sub task_11_change_password {
     } else {
         print "Пользователь с таким именем не существует\n";
     }
+}
+
+# Функция для парсинга xml
+sub parse_pro_xml {
+    my $file_name = shift @_;
+
+    # Чтение и парсинг xml
+    my $document = XML::LibXML->new->parse_file( $conf_path . $file_name );
+
+    # форматируем результат
+    $document =~ s/ < [^>]* > //gx;
+    $document =~ s/ \s+ / /gx;
+
+    return $document;
+}
+
+# Функция для парсинга json
+sub parse_pro_json {
+    my $file_name = shift @_;
+
+    # Открываем файл
+    if ( ! open FILE, "<", $conf_path . $file_name ) {
+        print "Can't open '$file_name in directory $conf_path ': $!";
+    }
+
+    # Если удалось открыть файл, читаем и сохраняем его в строку
+    my $json_string = "";
+    while ( my $file = <FILE> ) {
+        chomp( $file );
+        $json_string .= $file;
+    }
+
+    # Закрытие файла
+    close FILE;
+
+    # парсинг json
+    my $document = JSON::PP->new->encode( $json_string );
+
+    # форматируем результат
+    $document =~ s/ \\+ \"+ \w* \\+ \"+ \h+ :+ //gx;
+    $document =~ s/ {+ | }+ | \[+ | \]+ | \\+ | \"+ | ,+ //gx;
+    $document =~ s/ \s+ / /gx;
+
+    return $document;
 }
 
 1;
